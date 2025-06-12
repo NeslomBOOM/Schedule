@@ -1,0 +1,129 @@
+﻿@model List<Schedule>
+
+@{
+    ViewData["Title"] = "Schedule";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Schedule Index</h2>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col col-6">
+                    <h2>Penalty Count</h2>
+                </div>
+                <div class="col col-2">
+                    <p>Overlay</p>
+                </div>
+                <div class="col col-2">
+                    <p>Teacher</>
+                </div>
+                <div class="col col-2">
+                    <p>Maximum Class In Section</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @for (int i = 0; i < Model.Count(); i++)
+    {
+        <div class="row schedule-item">
+            <div class="col-md-6">
+                <button class="btn btn-primary" onclick="toggleSchedule(@i)">@i</button>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col col-6">
+                        <button class="btn btn-danger" onclick="toggleSchedule(@i)">@Model[i].Penalty.TotalPenalty</button>
+                    </div>
+                    <div class="col col-2">
+                        <button class="btn" onclick="toggleSchedule(@i)">@Model[i].Penalty.PenaltyOfOverlay</button>
+                    </div>
+                    <div class="col col-2">
+                        <button class="btn" onclick="toggleSchedule(@i)">@Model[i].Penalty.PenaltyOfTeacher</button>
+                    </div>
+                    <div class="col col-2">
+                        <button class="btn" onclick="toggleSchedule(@i)">@Model[i].Penalty.PenaltyOfMaximumCountOfClassInSection</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <hr />
+        <div class="schedule-details" id="schedule-@i" style="display:none;">
+            <table class="table" id="schedule-table-@i">
+                <thead>
+                    <tr>
+                        <th>index</th>
+                        <th onclick="sortTable('@i', 0)">Class Name</th>
+                        <th onclick="sortTable('@i', 1)">Teacher Name</th>
+                        <th onclick="sortTable('@i', 2)">Class Times</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int j = 0; j < Model[i].CourseTeacherClassTimes.Count(); j++)
+                    {
+                        <tr>
+                            <td>@j</td>
+                            <td>@Model[i].CourseTeacherClassTimes[j].Course.Name</td>
+                            <td>@Model[i].CourseTeacherClassTimes[j].Teacher.Name</td>
+                            <td>
+                                @foreach (var time in Model[i].CourseTeacherClassTimes[j].ClassTimes)
+                                {
+                                    <p>@time.ClassTime.ToString()  @time.EvenOdd</p>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <br />
+        
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function toggleSchedule(id) {
+            var schedule = document.getElementById("schedule-" + id);
+            schedule.style.display = (schedule.style.display == "none") ? "block" : "none";
+        }
+
+        function sortTable(tableId, columnIndex) {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementById("schedule-table-" + tableId);
+            switching = true;
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[columnIndex];
+                    y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+
+                    // For ClassTime column, parse the time strings for comparison
+                    if (columnIndex == 2) {
+                        var xClassTime = x.innerText.trim().split(' ')[0];
+                        var yClassTime = y.innerText.trim().split(' ')[0];
+                        if (xClassTime > yClassTime) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
+            }
+        }
+    </script>
+}

@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Schedule";
+    var semesters =(List<Semester>)ViewData["semester"];
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-header bg-primary bg-gradient text-white">
+                    <h3 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Schedule Generator</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="GeneticAlgorithm" class="needs-validation">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Population Size</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-users"></i></span>
+                                <input name="Count" type="number" class="form-control" placeholder="Default: 100" min="1" />
+                            </div>
+                            <small class="text-muted">Higher population size may improve results but increase processing time</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Maximum Unhealthy Iterations</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-redo"></i></span>
+                                <input name="UnhealtyCount" type="number" class="form-control" placeholder="Default: 1000" min="1" />
+                            </div>
+                            <small class="text-muted">Maximum attempts before stopping if no better solution is found</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Select Semester</label>
+                            <div class="d-flex flex-wrap gap-3">
+                                @foreach (var semester in semesters)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="@semester.ID" name="semesterId" value="@semester.ID" required />
+                                        <label class="form-check-label" for="@semester.ID">@semester.Name</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button class="btn btn-primary btn-lg px-5" type="submit">
+                                <i class="fas fa-magic me-2"></i>Generate Schedule
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
